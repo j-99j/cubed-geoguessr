@@ -4,14 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cubed GeoGuessr</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="images/favicon.png">
-    <meta name="description" content="A fun Minecraft-inspired GeoGuessr game!">
+    <meta name="description" content="Geoguessr but Cubed">
     <meta name="author" content="kubus99">
-    <script type="text/javascript" src="js/jquery-3.5.1.js"></script>
-    <script type="text/javascript" src="js/leaflet.js"></script>
-    <script type="text/javascript" src="js/custommarker.js"></script>
-    <script type="text/javascript" src="js/config.js"></script>
 </head>
 <body>
     <div id="home-screen">
@@ -43,7 +39,6 @@
     </div>
 
     <script>
-        let map, marker;
         const threshold = 3000;
         let accumulatedDistance = 0;
         let currentRound = 0;
@@ -59,20 +54,16 @@
         };
 
         const initMap = () => {
-    const mapContainer = document.getElementById('map-container');
-    if (mapContainer.querySelector('iframe')) return;
-    mapContainer.innerHTML = `
-        <iframe 
-            src="https://map.cubed.community/tiles/"
-            style="width: 100%; height: 100%; border: none;"
-            title="Live Dynmap"
-            onerror="document.getElementById('map-container').innerHTML = '<p>Map currently unavailable. Please try again later.</p>'"
-        ></iframe>
-    `;
-};
-
-        const updateCoordinatesDisplay = (latlng) => {
-            document.getElementById('coordinates-display').textContent = `Your guess: X: ${Math.round(latlng.lng)}, Z: ${Math.round(latlng.lat)}`;
+            const mapContainer = document.getElementById('map-container');
+            if (mapContainer.querySelector('iframe')) return; // Avoid multiple iframe inserts
+            mapContainer.innerHTML = `
+                <iframe 
+                    src="https://map.cubed.community/tiles/"
+                    style="width: 100%; height: 100%; border: none;"
+                    title="Live Dynmap"
+                    onerror="document.getElementById('map-container').innerHTML = '<p>Map currently unavailable. Please try again later.</p>'"
+                ></iframe>
+            `;
         };
 
         const loadScreenshotPool = (gamemode) => {
@@ -80,7 +71,7 @@
                 screenshotPool = [
                     { image: "images/andea1.png", x: 122, z: -674 },
                     { image: "images/andea2.png", x: 83, z: -509 },
-                    { image: "images/andea3.png", x: -134, z: -1322}
+                    { image: "images/andea3.png", x: -134, z: -1322 }
                 ];
             } else if (gamemode === "Aura") {
                 screenshotPool = [
@@ -108,47 +99,13 @@
         };
 
         const confirmGuess = () => {
-            if (!marker) {
-                alert('Please place a marker on the map!');
-                return;
-            }
-
-            const round = gameData.rounds[currentRound];
-            const guess = marker.getLatLng();
-            const guessX = Math.round(guess.lng);
-            const guessZ = Math.round(guess.lat);
-
-            const distance = Math.abs(round.x - guessX) + Math.abs(round.z - guessZ);
-            accumulatedDistance += distance;
-
-            document.getElementById('distance').textContent = `${distance} blocks away`;
-
-            const score = Math.max(0, 1000 - distance);
-            gameData.score += score;
-
-            if (accumulatedDistance > threshold) {
-                endGame();
-                return;
-            }
-
-            currentRound++;
-
-            if (currentRound < maxRounds) {
-                loadRound();
-            } else {
-                endGame();
-            }
+            alert('This feature is not implemented with the iframe map.');
         };
 
         const loadRound = () => {
             const round = gameData.rounds[currentRound];
             document.getElementById('screenshot').src = round.image;
             document.getElementById('round-number').textContent = currentRound + 1;
-
-            if (marker) {
-                map.removeLayer(marker);
-                marker = null;
-            }
             document.getElementById('coordinates-display').textContent = '';
             document.getElementById('distance').textContent = '';
 

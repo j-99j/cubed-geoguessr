@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cubed GeoGuessr</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="icon" type="image/png" href="images/favicon.png">
-    <meta name="description" content="Geoguessr but Cubed">
+    <meta name="description" content="A fun Minecraft-inspired GeoGuessr game!">
     <meta name="author" content="kubus99">
+    <!-- Add Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </head>
 <body>
     <div id="home-screen">
@@ -25,6 +28,7 @@
         <p>Round <span id="round-number">1</span> of 10</p>
         <p>Time Remaining: <span id="time-remaining">3:00</span></p>
         <img id="screenshot" src="" alt="Game Screenshot" style="max-width: 100%; height: auto;" />
+        <!-- Create the map container -->
         <div id="map-container" style="height: 400px; margin-top: 10px;"></div>
         <button id="confirm-guess">Confirm Guess</button>
         <p id="coordinates-display"></p>
@@ -39,6 +43,7 @@
     </div>
 
     <script>
+        let map, marker;
         const threshold = 3000;
         let accumulatedDistance = 0;
         let currentRound = 0;
@@ -54,16 +59,24 @@
         };
 
         const initMap = () => {
-            const mapContainer = document.getElementById('map-container');
-            if (mapContainer.querySelector('iframe')) return; // Avoid multiple iframe inserts
-            mapContainer.innerHTML = `
-                <iframe 
-                    src="https://map.cubed.community/tiles/"
-                    style="width: 100%; height: 100%; border: none;"
-                    title="Live Dynmap"
-                    onerror="document.getElementById('map-container').innerHTML = '<p>Map currently unavailable. Please try again later.</p>'"
-                ></iframe>
-            `;
+            // Initialize the map
+            map = L.map('map-container').setView([0, 0], 2); // Set initial view to a global scale
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Add click event to place marker
+            map.on('click', (e) => {
+                if (marker) {
+                    map.removeLayer(marker);
+                }
+                marker = L.marker(e.latlng).addTo(map);
+                updateCoordinatesDisplay(e.latlng);
+            });
+        };
+
+        const updateCoordinatesDisplay = (latlng) => {
+            document.getElementById('coordinates-display').textContent = `Your guess: X: ${Math.round(latlng.lng)}, Z: ${Math.round(latlng.lat)}`;
         };
 
         const loadScreenshotPool = (gamemode) => {
@@ -71,7 +84,7 @@
                 screenshotPool = [
                     { image: "images/andea1.png", x: 122, z: -674 },
                     { image: "images/andea2.png", x: 83, z: -509 },
-                    { image: "images/andea3.png", x: -134, z: -1322 }
+                    { image: "images/andea3.png", x: -134, z: -1322}
                 ];
             } else if (gamemode === "Aura") {
                 screenshotPool = [
@@ -99,13 +112,47 @@
         };
 
         const confirmGuess = () => {
-            alert('This feature is not implemented with the iframe map.');
+            if (!marker) {
+                alert('Please place a marker on the map!');
+                return;
+            }
+
+            const round = gameData.rounds[currentRound];
+            const guess = marker.getLatLng();
+            const guessX = Math.round(guess.lng);
+            const guessZ = Math.round(guess.lat);
+
+            const distance = Math.abs(round.x - guessX) + Math.abs(round.z - guessZ);
+            accumulatedDistance += distance;
+
+            document.getElementById('distance').textContent = `${distance} blocks away`;
+
+            const score = Math.max(0, 1000 - distance);
+            gameData.score += score;
+
+            if (accumulatedDistance > threshold) {
+                endGame();
+                return;
+            }
+
+            currentRound++;
+
+            if (currentRound < maxRounds) {
+                loadRound();
+            } else {
+                endGame();
+            }
         };
 
         const loadRound = () => {
             const round = gameData.rounds[currentRound];
             document.getElementById('screenshot').src = round.image;
             document.getElementById('round-number').textContent = currentRound + 1;
+
+            if (marker) {
+                map.removeLayer(marker);
+                marker = null;
+            }
             document.getElementById('coordinates-display').textContent = '';
             document.getElementById('distance').textContent = '';
 
@@ -147,9 +194,12 @@
             }
         };
 
-        document.getElementById('start-game').onclick = startGame;
-        document.getElementById('confirm-guess').onclick = confirmGuess;
-        document.getElementById('home').onclick = returnHome;
+        document.getElementById('start-game').addEventListener('click', startGame);
+        document.getElementById('confirm-guess').addEventListener('click', confirmGuess);
+        document.getElementById('home').addEventListener('click', returnHome);
+
+        // Initialize the map on page load
+        initMap();
     </script>
 </body>
 </html>

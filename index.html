@@ -11,6 +11,7 @@
     <script type="text/javascript" src="js/jquery-3.5.1.js"></script>
     <script type="text/javascript" src="js/leaflet.js"></script>
     <script type="text/javascript" src="js/custommarker.js"></script>
+    <script type="text/javascript" src="js/config.js"></script>
 </head>
 <body>
     <div id="home-screen">
@@ -57,22 +58,18 @@
             score: 0,
         };
 
-        const initMap = (x = 0, z = 0) => {
-            if (map) {
-                map.off();
-                map.remove();
-            }
-            map = L.map('map-container').setView([z, x], 2);
-            L.tileLayer('https://map.cubed.community/tiles/{z}/{x}/{y}.png', {
-                attribution: 'Map data © Cubed Community',
-            }).addTo(map);
-
-            map.on('click', (e) => {
-                if (marker) map.removeLayer(marker);
-                marker = L.marker(e.latlng).addTo(map);
-                updateCoordinatesDisplay(e.latlng);
-            });
-        };
+        const initMap = () => {
+    const mapContainer = document.getElementById('map-container');
+    if (mapContainer.querySelector('iframe')) return;
+    mapContainer.innerHTML = `
+        <iframe 
+            src="https://map.cubed.community/tiles/"
+            style="width: 100%; height: 100%; border: none;"
+            title="Live Dynmap"
+            onerror="document.getElementById('map-container').innerHTML = '<p>Map currently unavailable. Please try again later.</p>'"
+        ></iframe>
+    `;
+};
 
         const updateCoordinatesDisplay = (latlng) => {
             document.getElementById('coordinates-display').textContent = `Your guess: X: ${Math.round(latlng.lng)}, Z: ${Math.round(latlng.lat)}`;

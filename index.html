@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cubed GeoGuessr</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="images/favicon.png">
     <meta name="description" content="A fun Minecraft-inspired GeoGuessr game!">
     <meta name="author" content="kubus99">
     <!-- Add Leaflet CSS and JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://map.cubed.community/css/leaflet.css?_=3.7-beta-4-935" />
+    <script src="https://map.cubed.community/js/leaflet.js?_=3.7-beta-4-935"></script>
 </head>
 <body>
     <div id="home-screen">
@@ -61,8 +61,8 @@
         const initMap = () => {
             // Initialize the map
             map = L.map('map-container').setView([0, 0], 2); // Set initial view to a global scale
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            L.tileLayer('https://map.cubed.community/?worldname=Andea&mapname=flat&zoom=3&x=-50&y=64&z=-650.png', {
+                attribution: 'Map data © Cubed Community',
             }).addTo(map);
 
             // Add click event to place marker

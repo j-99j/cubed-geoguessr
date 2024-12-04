@@ -16,15 +16,23 @@ let gameData = {
 // Map configuration for each city
 const cityConfigs = {
     Andea: {
-        tileUrl: 'https://map.cubed.community/tiles/Andea/flat/{z}/{x}/{y}.jpg?timestamp=' + Date.now(),
-        initialCoords: [0, 0], // Initial map view
-        maxZoom: 4
+        tileUrl: function (zoom, x, y) {
+            const zPrefix = 'z'.repeat(8 - zoom); // Adjust based on zoom level
+            return `https://map.cubed.community/tiles/Andea/flat/${zoom}_${x}/${zPrefix}_${x}_${y}.jpg?timestamp=${Date.now()}`;
+        },
+        initialCoords: [0, 0],
+        maxZoom: 4,
+        minZoom: 0,
     },
-    Aura: {
-        tileUrl: 'https://map.cubed.community/tiles/Aura/flat/{z}/{x}/{y}.jpg?timestamp=' + Date.now(),
-        initialCoords: [3840, 3336], // Adjust initial map view to match Aura's coordinates
-        maxZoom: 4
-    }
+    Oasia: {
+        tileUrl: function (zoom, x, y) {
+            const zPrefix = 'zzz';
+            return `https://map.cubed.community/tiles/OasiaMap/flat/${zoom}_${x}/${zPrefix}_${x}_${y}.jpg?timestamp=${Date.now()}`;
+        },
+        initialCoords: [3840, 3336],
+        maxZoom: 4,
+        minZoom: 0,
+    },
 };
 
 // Initialize the map
@@ -32,15 +40,30 @@ const initMap = (city) => {
     const config = cityConfigs[city];
     if (map) map.remove();
 
-    map = L.map('map-container').setView(config.initialCoords, 2);
-    L.tileLayer(config.tileUrl, {
-        attribution: 'Map data © Cubed Community',
+    map = L.map("map-container", {
+        center: config.initialCoords,
+        zoom: 2,
+        minZoom: config.minZoom,
         maxZoom: config.maxZoom,
-        tileSize: 256
-    }).addTo(map);
+    });
+
+    const tileLayer = L.tileLayer("", {
+        attribution: "Map data © Cubed Community",
+        maxZoom: config.maxZoom,
+        tileSize: 256,
+        zoomOffset: 0,
+        getTileUrl: function (coords) {
+            const { x, y, z } = coords;
+            const tileUrl = config.tileUrl(z, x, y);
+            console.log(`Generated tile URL: ${tileUrl}`); // Debugging log
+            return tileUrl;
+        },
+    });
+
+    tileLayer.addTo(map);
 
     // Add click event for marker placement
-    map.on('click', (e) => {
+    map.on("click", (e) => {
         if (marker) {
             map.removeLayer(marker);
         }
@@ -51,7 +74,9 @@ const initMap = (city) => {
 
 // Update displayed coordinates
 const updateCoordinatesDisplay = (latlng) => {
-    document.getElementById('coordinates-display').textContent = `Your guess: X: ${Math.round(latlng.lng)}, Z: ${Math.round(latlng.lat)}`;
+    document.getElementById("coordinates-display").textContent = `Your guess: X: ${Math.round(
+        latlng.lng
+    )}, Z: ${Math.round(latlng.lat)}`;
 };
 
 // Load screenshots and coordinates for a city
@@ -77,7 +102,7 @@ const loadScreenshotPool = (gamemode) => {
             { image: "images/andea17.png", x: -3601, z: -3257 },
             { image: "images/andea18.png", x: 522, z: -536 },
             { image: "images/andea19.png", x: -2, z: -1176 },
-            { image: "images/andea20.png", x: 0, z: 0}, //Correct coords
+            { image: "images/andea20.png", x: 0, z: 0 }, //Correct coords
             { image: "images/andea21.png", x: 107, z: -1483 },
             { image: "images/andea22.png", x: -1233, z: -977 },
             { image: "images/andea23.png", x: -3867, z: -319 },
@@ -85,19 +110,18 @@ const loadScreenshotPool = (gamemode) => {
             { image: "images/andea25.png", x: -1483, z: -175 },
             { image: "images/andea26.png", x: -3411, z: -4871 },
             { image: "images/andea27.png", x: -820, z: 3050 }
-
         ];
     } else if (gamemode === "Aura") {
         screenshotPool = [
             { image: "images/aura1.jpg", x: 500, z: -300 },
-            { image: "images/aura2.jpg", x: 800, z: 600 }
+            { image: "images/aura2.jpg", x: 800, z: 600 },
         ];
     }
 };
 
 // Start the game
 const startGame = () => {
-    const gamemode = document.getElementById('gamemode-select').value;
+    const gamemode = document.getElementById("gamemode-select").value;
     loadScreenshotPool(gamemode);
     shuffleArray(screenshotPool);
     gameData.rounds = screenshotPool.slice(0, maxRounds);
@@ -106,9 +130,9 @@ const startGame = () => {
     accumulatedDistance = 0;
     timeRemaining = sessionTimeLimit;
 
-    document.getElementById('threshold-display').textContent = threshold;
-    document.getElementById('home-screen').style.display = 'none';
-    document.getElementById('game-screen').style.display = 'block';
+    document.getElementById("threshold-display").textContent = threshold;
+    document.getElementById("home-screen").style.display = "none";
+    document.getElementById("game-screen").style.display = "block";
     initMap(gamemode);
     startCountdown();
     loadRound();
@@ -117,7 +141,7 @@ const startGame = () => {
 // Confirm user's guess
 const confirmGuess = () => {
     if (!marker) {
-        alert('Please place a marker on the map!');
+        alert("Please place a marker on the map!");
         return;
     }
 
@@ -129,7 +153,7 @@ const confirmGuess = () => {
     const distance = Math.abs(round.x - guessX) + Math.abs(round.z - guessZ);
     accumulatedDistance += distance;
 
-    document.getElementById('distance').textContent = `${distance} blocks away`;
+    document.getElementById("distance").textContent = `${distance} blocks away`;
 
     const score = Math.max(0, 1000 - distance);
     gameData.score += score;
@@ -151,15 +175,15 @@ const confirmGuess = () => {
 // Load the next round
 const loadRound = () => {
     const round = gameData.rounds[currentRound];
-    document.getElementById('screenshot').src = round.image;
-    document.getElementById('round-number').textContent = currentRound + 1;
+    document.getElementById("screenshot").src = round.image;
+    document.getElementById("round-number").textContent = currentRound + 1;
 
     if (marker) {
         map.removeLayer(marker);
         marker = null;
     }
-    document.getElementById('coordinates-display').textContent = '';
-    document.getElementById('distance').textContent = '';
+    document.getElementById("coordinates-display").textContent = "";
+    document.getElementById("distance").textContent = "";
 };
 
 // Countdown timer
@@ -174,23 +198,25 @@ const startCountdown = () => {
         timeRemaining--;
         const minutes = Math.floor(timeRemaining / 60);
         const seconds = timeRemaining % 60;
-        document.getElementById('time-remaining').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        document.getElementById("time-remaining").textContent = `${minutes}:${seconds
+            .toString()
+            .padStart(2, "0")}`;
     }, 1000);
 };
 
 // End the game
 const endGame = () => {
     clearInterval(countdownInterval);
-    document.getElementById('game-screen').style.display = 'none';
-    document.getElementById('game-over-screen').style.display = 'block';
-    document.getElementById('final-score').textContent = gameData.score;
+    document.getElementById("game-screen").style.display = "none";
+    document.getElementById("game-over-screen").style.display = "block";
+    document.getElementById("final-score").textContent = gameData.score;
 };
 
 // Return to home
 const returnHome = () => {
     clearInterval(countdownInterval);
-    document.getElementById('game-over-screen').style.display = 'none';
-    document.getElementById('home-screen').style.display = 'block';
+    document.getElementById("game-over-screen").style.display = "none";
+    document.getElementById("home-screen").style.display = "block";
 };
 
 // Utility: Shuffle an array
@@ -202,6 +228,6 @@ const shuffleArray = (array) => {
 };
 
 // Event Listeners
-document.getElementById('start-game').addEventListener('click', startGame);
-document.getElementById('confirm-guess').addEventListener('click', confirmGuess);
-document.getElementById('home').addEventListener('click', returnHome);
+document.getElementById("start-game").addEventListener("click", startGame);
+document.getElementById("confirm-guess").addEventListener("click", confirmGuess);
+document.getElementById("home").addEventListener("click", returnHome);

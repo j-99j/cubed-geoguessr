@@ -153,15 +153,8 @@ const confirmGuess = () => {
     const distance = Math.abs(round.x - guessX) + Math.abs(round.z - guessZ);
     accumulatedDistance += distance;
 
-    document.getElementById("distance").textContent = `${distance} blocks away`;
-
     const score = Math.max(0, 1000 - distance);
     gameData.score += score;
-
-    if (accumulatedDistance > threshold) {
-        endGame();
-        return;
-    }
 
     currentRound++;
 
@@ -183,7 +176,6 @@ const loadRound = () => {
         marker = null;
     }
     document.getElementById("coordinates-display").textContent = "";
-    document.getElementById("distance").textContent = "";
 };
 
 // Countdown timer

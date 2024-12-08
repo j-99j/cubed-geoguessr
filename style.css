@@ -57,3 +57,12 @@ img {
     border: 3px solid #ddd;
     border-radius: 5px;
 }
+
+#game-over-screen h1 {
+    color: #d9534f;
+}
+
+#game-over-screen p {
+    font-size: 18px;
+    color: #555;
+}

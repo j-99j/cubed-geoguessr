@@ -8,13 +8,12 @@
     <link rel="icon" type="image/png" href="images/favicon.png">
     <meta name="description" content="A fun Minecraft-inspired GeoGuessr game!">
     <meta name="author" content="kubus99">
-    <!-- Add Leaflet CSS -->
     <link rel="stylesheet" href="https://map.cubed.community/css/leaflet.css?_=3.7-beta-4-935" />
 </head>
 <body>
     <div id="home-screen">
         <h1>Cubed GeoGuessr</h1>
-        <p>Select a gamemode and start playing! Margin of error: <span id="threshold-display">3000</span> blocks</p>
+        <p>Select a gamemode and start playing!</p>
         <select id="gamemode-select">
             <option value="Andea">Andea</option>
             <option value="Aura">Aura</option>
@@ -27,22 +26,23 @@
         <p>Round <span id="round-number">1</span> of 10</p>
         <p>Time Remaining: <span id="time-remaining">3:00</span></p>
         <img id="screenshot" src="" alt="Game Screenshot" style="max-width: 100%; height: auto;" />
-        <!-- Map container -->
         <div id="map-container" style="height: 400px; margin-top: 10px;"></div>
         <button id="confirm-guess">Confirm Guess</button>
         <p id="coordinates-display"></p>
-        <p>Distance: <span id="distance"></span> blocks away</p>
     </div>
 
     <div id="game-over-screen" style="display: none;">
-        <h1>Game Over</h1>
+        <h1 id="game-over-title"></h1>
+        <p id="game-over-message"></p>
         <p>Your final score is: <span id="final-score"></span></p>
-        <p>You exceeded the distance threshold of <span id="threshold-display">3000</span> blocks away from target or ran out of time!</p>
         <button id="home">Return to Home</button>
     </div>
 
-    <!-- Include Leaflet JS and External Script -->
+    <script src="https://map.cubed.community/js/jquery-3.5.1.js"></script>
     <script src="https://map.cubed.community/js/leaflet.js?_=3.7-beta-4-935"></script>
+    <script src="https://map.cubed.community/js/dynmaputils.js?_=3.7-beta-4-935"></script>
+    <script src="https://map.cubed.community/js/map.js?_=3.7-beta-4-935"></script>
+    <script src="https://map.cubed.community/js/hdmap.js?_=3.7-beta-4-935"></script>
     <script src="script.js"></script>
 </body>
 </html>

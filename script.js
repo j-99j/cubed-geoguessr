@@ -1,12 +1,11 @@
 let map, marker;
-const threshold = 3000;
-let accumulatedDistance = 0;
-let currentRound = 0;
 const maxRounds = 10;
 const sessionTimeLimit = 180;
+const marginOfError = 6000;
+let accumulatedDistance = 0;
+let currentRound = 0;
 let timeRemaining = sessionTimeLimit;
 let countdownInterval;
-
 let screenshotPool = [];
 let gameData = {
     rounds: [],
@@ -16,19 +15,22 @@ let gameData = {
 // Map configuration for each city
 const cityConfigs = {
     Andea: {
-        tileUrl: function (zoom, x, y) {
-            const zPrefix = 'z'.repeat(8 - zoom); // Adjust based on zoom level
-            return `https://map.cubed.community/tiles/Andea/flat/${zoom}_${x}/${zPrefix}_${x}_${y}.jpg?timestamp=${Date.now()}`;
+        getTileUrl: function (coords) {
+            const { x, y, z } = coords;
+            const zPrefix = 'z'.repeat(8 - z);
+            const folderX = Math.floor(x / 32);
+            const folderY = Math.floor(y / 32);
+            const fileX = x % 32;
+            const fileY = y % 32;
+            const tileUrl = `https://map.cubed.community/tiles/Andea/flat/${folderX}_${folderY}/${zPrefix}_${fileX}_${fileY}.jpg?timestamp=1733267803676`;
+            console.log(`Generated Tile URL: ${tileUrl}`);
+            return tileUrl;
         },
-        initialCoords: [0, 0],
+        initialCoords: [-5, -3],
         maxZoom: 4,
         minZoom: 0,
     },
     Oasia: {
-        tileUrl: function (zoom, x, y) {
-            const zPrefix = 'zzz';
-            return `https://map.cubed.community/tiles/OasiaMap/flat/${zoom}_${x}/${zPrefix}_${x}_${y}.jpg?timestamp=${Date.now()}`;
-        },
         initialCoords: [3840, 3336],
         maxZoom: 4,
         minZoom: 0,
@@ -50,7 +52,7 @@ const initMap = (city) => {
     const tileLayer = L.tileLayer("", {
         attribution: "Map data © Cubed Community",
         maxZoom: config.maxZoom,
-        tileSize: 256,
+        tileSize: 128,
         zoomOffset: 0,
         getTileUrl: function (coords) {
             const { x, y, z } = coords;
@@ -102,7 +104,7 @@ const loadScreenshotPool = (gamemode) => {
             { image: "images/andea17.png", x: -3601, z: -3257 },
             { image: "images/andea18.png", x: 522, z: -536 },
             { image: "images/andea19.png", x: -2, z: -1176 },
-            { image: "images/andea20.png", x: 0, z: 0 }, //Correct coords
+            { image: "images/andea20.png", x: 4, z: -1308 },
             { image: "images/andea21.png", x: 107, z: -1483 },
             { image: "images/andea22.png", x: -1233, z: -977 },
             { image: "images/andea23.png", x: -3867, z: -319 },
@@ -153,6 +155,11 @@ const confirmGuess = () => {
     const distance = Math.abs(round.x - guessX) + Math.abs(round.z - guessZ);
     accumulatedDistance += distance;
 
+    if (accumulatedDistance > marginOfError) {
+        endGame("You exceeded the margin of error! Better luck next time!");
+        return;
+    }
+
     const score = Math.max(0, 1000 - distance);
     gameData.score += score;
 
@@ -161,7 +168,7 @@ const confirmGuess = () => {
     if (currentRound < maxRounds) {
         loadRound();
     } else {
-        endGame();
+        endGame("Session cleared! Good job!");
     }
 };
 
@@ -184,7 +191,7 @@ const startCountdown = () => {
     countdownInterval = setInterval(() => {
         if (timeRemaining <= 0) {
             clearInterval(countdownInterval);
-            endGame();
+            endGame("You ran out of time! Don't overthink it!");
             return;
         }
         timeRemaining--;
@@ -201,6 +208,7 @@ const endGame = () => {
     clearInterval(countdownInterval);
     document.getElementById("game-screen").style.display = "none";
     document.getElementById("game-over-screen").style.display = "block";
+    document.getElementById("game-over-title").textContent = message;
     document.getElementById("final-score").textContent = gameData.score;
 };
 

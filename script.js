@@ -2,6 +2,7 @@ let map, marker;
 const maxRounds = 10;
 const sessionTimeLimit = 180;
 const marginOfError = 6000;
+const threshold = 6000;
 let accumulatedDistance = 0;
 let currentRound = 0;
 let timeRemaining = sessionTimeLimit;

@@ -11,32 +11,42 @@
     <link rel="stylesheet" href="https://map.cubed.community/css/leaflet.css?_=3.7-beta-4-935" />
 </head>
 <body>
-    <div id="home-screen">
-        <h1>Cubed GeoGuessr</h1>
-        <p>Select a gamemode and start playing!</p>
-        <select id="gamemode-select">
-            <option value="Andea">Andea</option>
-            <option value="Aura">Aura</option>
-        </select>
-        <button id="start-game">Start Game</button>
-    </div>
+    <header>
+        <div class="header-content">
+            <h1>
+                <span id="logo-wrapper">
+                    <a href="https://cubed.community" id="cubed-logo" aria-label="Cubed Community">
+                        <span class="cubed-piece piece1"></span>
+                        <span class="cubed-piece piece2"></span>
+                        <span class="cubed-piece piece3"></span>
+                        <span class="cubed-piece piece4"></span>
+                        C
+                    </a>
+                </span>
+                <span class="ubed">UBED</span>
+                <span class="geo">
+                    GEO
+                    <span class="geo-shadow">GEO</span>
+                </span>
+            </h1>
+            <p class="subtitle">(-guessr)</p>
+            <p class="gamemode-desc">Select a gamemode and start playing!</p>
+        </div>
+    </header>
 
-    <div id="game-screen" style="display: none;">
-        <h1>Cubed GeoGuessr</h1>
-        <p>Round <span id="round-number">1</span> of 10</p>
-        <p>Time Remaining: <span id="time-remaining">3:00</span></p>
-        <img id="screenshot" src="" alt="Game Screenshot" style="max-width: 100%; height: auto;" />
-        <div id="map-container" style="height: 400px; margin-top: 10px;"></div>
-        <button id="confirm-guess">Confirm Guess</button>
-        <p id="coordinates-display"></p>
-    </div>
+    <section id="game-modes">
+        <button class="gamemode-button">ANDEA</button>
+        <p class="coming-soon">more coming soon...</p>
+    </section>
 
-    <div id="game-over-screen" style="display: none;">
-        <h1 id="game-over-title"></h1>
-        <p id="game-over-message"></p>
-        <p>Your final score is: <span id="final-score"></span></p>
-        <button id="home">Return to Home</button>
-    </div>
+    <section id="leaderboard">
+        <h2>Leaderboard</h2>
+        <ol>
+            <li><span class="rank">1</span> kubus99 - 9999</li>
+            <li><span class="rank">2</span> nickname - score</li>
+            <li><span class="rank">3</span> nickname - score</li>
+        </ol>
+    </section>
 
     <script src="https://map.cubed.community/js/jquery-3.5.1.js"></script>
     <script src="https://map.cubed.community/js/leaflet.js?_=3.7-beta-4-935"></script>

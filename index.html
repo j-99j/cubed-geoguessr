@@ -5,48 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cubed GeoGuessr</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="images/favicon.png">
+    <link rel="icon" type="image/png" href="images/ui/favicon.png">
     <meta name="description" content="A fun Minecraft-inspired GeoGuessr game!">
     <meta name="author" content="kubus99">
     <link rel="stylesheet" href="https://map.cubed.community/css/leaflet.css?_=3.7-beta-4-935" />
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <h1>
-                <span id="logo-wrapper">
-                    <a href="https://cubed.community" id="cubed-logo" aria-label="Cubed Community">
-                        <span class="cubed-piece piece1"></span>
-                        <span class="cubed-piece piece2"></span>
-                        <span class="cubed-piece piece3"></span>
-                        <span class="cubed-piece piece4"></span>
-                        C
-                    </a>
-                </span>
-                <span class="ubed">UBED</span>
-                <span class="geo">
-                    GEO
-                    <span class="geo-shadow">GEO</span>
-                </span>
-            </h1>
-            <p class="subtitle">(-guessr)</p>
-            <p class="gamemode-desc">Select a gamemode and start playing!</p>
-        </div>
+    <div class="menu-icon" onclick="toggleMenu()">☰</div>
+    
+    <div id="sidebar" class="sidebar">
+      <div class="menu-header">Menu</div>
+      <div class="menu-item">How this works?</div>
+      <div class="menu-item">Contributors</div>
+    </div>
+    
+    <header class="header-container">
+      <div class="snap-text">ANDEA</div>
+      <div class="center-content">
+        <div class="logo">LOGO</div>
+        <span class="geo-logo">
+          <span class="text-ubed">UBED</span>
+          <span class="text-geo">GEO</span>
+        </span>
+        <span class="geo-caption">(-guessr)</span>
+      </div>
     </header>
-
-    <section id="game-modes">
-        <button class="gamemode-button">ANDEA</button>
-        <p class="coming-soon">more coming soon...</p>
-    </section>
-
-    <section id="leaderboard">
+  
+    <main>
+      <section class="gamemode-section">
+        <h2>Select a gamemode and start playing</h2>
+        <div class="gamemode-container">
+          <button id="andea-btn" class="gamemode-btn">Andea</button>
+          <span class="coming-soon">More coming soon...</span>
+        </div>
+      </section>
+  
+      <section class="leaderboard">
         <h2>Leaderboard</h2>
-        <ol>
-            <li><span class="rank">1</span> kubus99 - 9999</li>
-            <li><span class="rank">2</span> nickname - score</li>
-            <li><span class="rank">3</span> nickname - score</li>
-        </ol>
-    </section>
+        <div class="leaderboard-container">
+          <div class="leaderboard-row">
+            <span>1. kubus99</span>
+            <span>9999</span>
+          </div>
+          <div id="leaderboard-dynamic"></div>
+        </div>
+      </section>
+    </main>
 
     <script src="https://map.cubed.community/js/jquery-3.5.1.js"></script>
     <script src="https://map.cubed.community/js/leaflet.js?_=3.7-beta-4-935"></script>
@@ -54,5 +58,6 @@
     <script src="https://map.cubed.community/js/map.js?_=3.7-beta-4-935"></script>
     <script src="https://map.cubed.community/js/hdmap.js?_=3.7-beta-4-935"></script>
     <script src="script.js"></script>
+    <script src="menu-leaderboard.js"></script>
 </body>
 </html>

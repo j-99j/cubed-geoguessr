@@ -1,7 +1,18 @@
-function toggleMenu() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar.style.left = sidebar.style.left === '0px' ? '-250px' : '0px';
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  const menuIcon = document.getElementById('menu-icon');
+  const menuOverlay = document.getElementById('menu-overlay');
+
+  menuIcon.addEventListener('click', (event) => {
+      menuOverlay.classList.toggle('active');
+      event.stopPropagation();
+  });
+
+  document.addEventListener('click', (event) => {
+      if (!menuOverlay.contains(event.target) && !menuIcon.contains(event.target)) {
+          menuOverlay.classList.remove('active');
+      }
+  });
+});
   
   function updateLeaderboard(scores) {
     const leaderboard = document.getElementById('leaderboard-dynamic');

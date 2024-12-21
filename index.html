@@ -5,39 +5,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cubed GeoGuessr</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="images/ui/favicon.png">
+    <link rel="icon" type="image/png" href="images/_ui/favicon.png">
     <meta name="description" content="A fun Minecraft-inspired GeoGuessr game!">
     <meta name="author" content="kubus99">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=League+Spartan:wght@100..900&family=Lobster&family=Orbitron:wght@400..900&family=Purple+Purse&family=Zen+Tokyo+Zoo&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://map.cubed.community/css/leaflet.css?_=3.7-beta-4-935" />
 </head>
 <body>
-    <div class="menu-icon" onclick="toggleMenu()">☰</div>
-    
-    <div id="sidebar" class="sidebar">
-      <div class="menu-header">Menu</div>
-      <div class="menu-item">How this works?</div>
-      <div class="menu-item">Contributors</div>
+    <div class="menu-icon" id="menu-icon">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+    <div class="menu-overlay" id="menu-overlay">
+      <div class="menu-content">
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#how">How This Works</a></li>
+          <li><a href="contributors.html">Contributors</a></li>
+        </ul>
+      </div>
     </div>
     
-    <header class="header-container">
-      <div class="snap-text">ANDEA</div>
-      <div class="center-content">
-        <div class="logo">LOGO</div>
-        <span class="geo-logo">
-          <span class="text-ubed">UBED</span>
-          <span class="text-geo">GEO</span>
-        </span>
-        <span class="geo-caption">(-guessr)</span>
+    <div class="snap-text">
+      <span class="green-line"></span>
+      <span class="andea">ANDEA</span>
+   </div>
+    <div class="header">
+      <div class="logo-container">
+        <a href="https://map.cubed.community" target="_blank">
+          <img src="images/_ui/logo.png" alt="Cubed Logo" id="cubed-logo">
+        </a>
+     </div>
+      <div id="header-text">
+          <span class="ubed">UBED</span>
+          <span class="geo">GEO</span>
+          <span id="guessr">(-guessr)</span>
       </div>
-    </header>
+      <img src="images/_ui/tiles1.png" alt="Below Header Image" class="below-header-image">
+    </div>
   
     <main>
       <section class="gamemode-section">
-        <h2>Select a gamemode and start playing</h2>
-        <div class="gamemode-container">
-          <button id="andea-btn" class="gamemode-btn">Andea</button>
-          <span class="coming-soon">More coming soon...</span>
-        </div>
+          <h2>Select a gamemode and start playing!</h2>
+          <button class="gamemode-btn" onclick="initMap('Andea')">ANDEA</button>
+          <p class="coming-soon">More coming soon...</p>
       </section>
   
       <section class="leaderboard">
@@ -50,6 +65,9 @@
           <div id="leaderboard-dynamic"></div>
         </div>
       </section>
+
+      <img src="images/_ui/tiles2.png" alt="Left Bottom Image" class="left-bottom-image">
+
     </main>
 
     <script src="https://map.cubed.community/js/jquery-3.5.1.js"></script>
